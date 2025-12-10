@@ -258,7 +258,7 @@ def reduce_grouped(x: torch.Tensor, indx: torch.Tensor, out: torch.Tensor, out_m
     K = 1 if indx is None else indx.shape[1]
     out_dtype = x.dtype if out_dtype is None else out_dtype
     assert x.shape[-1] % fused_activation.reduction_n == 0
-    BLOCK_N = 512
+    BLOCK_N = 1024
     # Resolve scalar flex scales (may be None)
     x_expected_scale = None if x_flex is None else x_flex.scale
     out_expected_scale = None if out_flex is None else out_flex.expected_scale
@@ -282,7 +282,7 @@ def reduce_grouped(x: torch.Tensor, indx: torch.Tensor, out: torch.Tensor, out_m
         HAS_IN_MX_SCALE=x_mx_scale is not None, HAS_OUT_MX_SCALE=out_mx_scale is not None,
         FLEXPOINT_SATURATE_INF=flexpoint_saturate_inf,  #
         BLOCK_N=BLOCK_N, K=K,  #
-        num_warps=1,  #
+        num_warps=8,  #
     )
     return out, out_mx_scale
 
